@@ -1,0 +1,10 @@
+node_modules/
+.tools/
+.env
+auth_info/
+downloads/
+data/owner-audit.jsonl
+data/access-control.json
+data/crash-recovery.jsonl
+*.log
+.DS_Store
