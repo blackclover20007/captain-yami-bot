@@ -1,0 +1,22 @@
+{
+  "name": "whatsapp-baileys-bot",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A simple WhatsApp bot built with Baileys.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "prestart": "node scripts/ensure-tools.js",
+    "start": "node scripts/run-bot.js",
+    "session-site": "node session-site/server.js",
+    "predev": "node scripts/ensure-tools.js",
+    "dev": "node --watch src/index.js"
+  },
+  "dependencies": {
+    "@whiskeysockets/baileys": "latest",
+    "dotenv": "latest",
+    "pino": "latest"
+  }
+}
