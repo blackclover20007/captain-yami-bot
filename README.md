@@ -1,101 +1,201 @@
-# Simple WhatsApp Baileys Bot
+🔥☠️ 𝐂𝐀𝐏𝐓𝐀𝐈𝐍 𝐘𝐀𝐌𝐈 𝐁𝐎𝐓 ☠️🔥
 
-Minimal WhatsApp bot using [Baileys](https://github.com/WhiskeySockets/Baileys).
+🩸 𝒀𝑨𝑴𝑰 𝑩𝑳𝑨𝑪𝑲 𝑪𝑳𝑶𝑽𝑬𝑹 — 𝑻𝑯𝑬 𝑫𝑬𝑽𝑰𝑳 𝑮𝑨𝑻𝑬 🩸
 
-### Panel deployment note
+<p align="center">
+  <img src="https://img.shields.io/badge/DEVIL%20MODE-ACTIVATED-red?style=for-the-badge&logo=github" />
+  <img src="https://img.shields.io/badge/WHATSAPP-BAILEYS-black?style=for-the-badge&logo=whatsapp" />
+  <img src="https://img.shields.io/badge/NODE.JS-20%2B-green?style=for-the-badge&logo=node.js" />
+</p><p align="center">
+  <b>☠️━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━☠️</b><br>
+  <i>“Power is not given to the weak. Break your limits and claim it.”</i><br>
+  <b>— THE DEVIL OF THE BLACK CLOVER</b><br>
+  <b>☠️━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━☠️</b>
+</p>🩸 𝟎𝟏. 𝐀𝐁𝐎𝐔𝐓 𝐓𝐇𝐄 𝐃𝐄𝐕𝐈𝐋
 
-The root `index.js` is a panel-compatible launcher. On WispyByte, either set the startup command to `npm start` or use `node index.js`. Use Node.js **20 or newer**; Node.js 19 is not supported. The launcher installs missing npm dependencies automatically, but the panel must run commands from the extracted project directory containing `package.json`.
+Welcome to Captain Yami Bot, a dark-themed WhatsApp automation project powered by "Baileys" (https://github.com/WhiskeySockets/Baileys).
 
-The current branding is **Captain Yami Bot**, version **Yami Black Clover**. The configured image is shown once to the owner when the bot connects and again whenever a user opens `!menu`. Contact numbers are `+263714373922 / +263784970429`, and the owner Telegram handle is `@saintbypass`.
+Born in darkness. Forged through battle. Designed for control.
 
-## Setup
+This bot features media downloads, group management, animated command responses, owner controls, role management, rate limiting, audit logs, and automatic crash recovery.
 
-```bash
+«🔥 PROJECT IDENTITY
+
+- ☠️ Bot Name: Captain Yami Bot
+- 🩸 Version: Yami Black Clover
+- 🍀 Theme: Dark / Crimson / Devil Gate
+- ⚡ Runtime: Node.js 20+
+- 👑 Owner: Saint
+- 🕷️ Developer Telegram: "@saintbypass" (https://t.me/saintbypass)»
+
+---
+
+🔥 𝟎𝟐. 𝐃𝐄𝐕𝐈𝐋 𝐆𝐀𝐓𝐄 — 𝐅𝐄𝐀𝐓𝐔𝐑𝐄𝐒
+
+☠️ Feature| 🩸 Description
+⚡ Fast Commands| Responsive WhatsApp command handling
+🎬 Media Downloads| MP3, TikTok and Instagram Reels
+👑 Owner Control| Advanced owner command system
+🛡️ Role Management| Manage sudoers and moderators
+🌑 Group Protection| Anti-link, welcome and goodbye
+🔥 Loading Cards| Decorated command progress messages
+🧾 Audit System| Records owner command outcomes
+♻️ Crash Recovery| Automatic restarts with backoff
+🔔 Rate Alerts| Optional group and webhook notifications
+🎭 Message Reactions| Success and failure reactions
+
+---
+
+🩸 𝟎𝟑. 𝐒𝐔𝐌𝐌𝐎𝐍 𝐓𝐇𝐄 𝐃𝐄𝐕𝐈𝐋
+
+Requirements
+
+- Node.js 20 or newer
+- npm
+- A compatible hosting panel or Linux server
+- A valid WhatsApp-linked session
+
+Installation
+
 cd /home/ubuntu/whatsapp-baileys-bot
 npm install
 cp .env.example .env
-```
 
-The bot no longer asks for a phone number in the console. Use the separate public [Captain Yami Session Site](https://github.com/blackclover20007/captain-yami-session-site) to generate a `YAMI_SESSION_V1...` value, then add it to the bot host as `SESSION_ID`. Start the bot with `npm start`; it restores that session and refuses to start without valid credentials. Never commit `SESSION_ID`, `PAIRING_SITE_KEY`, or `auth_info/`.
+Configure the environment variables in ".env" before starting the bot.
 
-Set `OWNER_JID` in `.env` to your WhatsApp JID before using owner commands:
+⚡ Activate the bot
 
-```env
+npm start
+
+Alternatively, use the panel startup command:
+
+node index.js
+
+The root "index.js" acts as the panel-compatible launcher. Run commands from the extracted project directory containing "package.json".
+
+---
+
+🔐 𝟎𝟒. 𝐋𝐈𝐍𝐊 𝐘𝐎𝐔𝐑 𝐒𝐄𝐒𝐒𝐈𝐎𝐍
+
+Generate a session using the official project session site:
+
+"☠️ CAPTAIN YAMI SESSION SITE" (https://github.com/blackclover20007/captain-yami-session-site)
+
+1. Open the session site.
+2. Follow its WhatsApp linking instructions.
+3. Generate your session ID.
+4. Add the generated "YAMI_SESSION_V1..." value to your hosting environment as "SESSION_ID".
+5. Start the bot using "npm start".
+
+The bot restores the saved session and refuses to start if valid credentials are missing.
+
+«⚠️ WhatsApp generates the pairing code. You cannot choose an arbitrary login code such as "1234-sant".»
+
+Never share your session ID or authentication files. They can grant access to your WhatsApp account.
+
+---
+
+👑 𝟎𝟓. 𝐎𝐖𝐍𝐄𝐑 𝐀𝐍𝐃 𝐒𝐔𝐃𝐎 𝐂𝐎𝐍𝐓𝐑𝐎𝐋
+
+Configure your authorized WhatsApp JIDs in ".env":
+
 OWNER_JID=15551234567@s.whatsapp.net
 SUDO_JIDS=15550000001@s.whatsapp.net,15550000002@s.whatsapp.net
 MODERATOR_JIDS=15550000003@s.whatsapp.net
-```
 
-Owner commands are in `src/owner-commands.js` and use three access tiers:
+Replace these example JIDs with your own authorized accounts.
 
-- **Owner**: full access, including restart, shutdown, prefix/name changes, and all sudoer/moderator commands.
-- **Sudoer**: operational access such as maintenance mode, cooldown changes, cleanup, tools, direct messaging, and moderation.
-- **Moderator**: status, statistics, user lookup, blocking, announcements, and the owner menu.
+🔥 Access levels
 
-Send `!ownerhelp` from an authorized account to see the command list. Unauthorized owner-command attempts are rejected and recorded in the audit log.
+- 👑 Owner: Full control, including restart, shutdown, and configuration changes.
+- 🩸 Sudoer: Operational tools, maintenance, cleanup, and moderation.
+- 🛡️ Moderator: Status, statistics, user lookup, blocking, announcements, and owner menu access.
 
-### Dynamic role management
+View the available owner commands:
 
-The owner can manage roles directly from chat:
+!ownerhelp
 
-```text
+Unauthorized owner-command attempts are rejected and recorded in the audit log.
+
+---
+
+🕷️ 𝟎𝟔. 𝐃𝐘𝐍𝐀𝐌𝐈𝐂 𝐑𝐎𝐋𝐄 𝐌𝐀𝐆𝐈𝐂
+
+Manage authorized users directly from WhatsApp.
+
 !addsudo 15550000001
 !removesudo 15550000001
 !addmoderator 15550000002
 !removemoderator 15550000002
 !roles
 !roles 15550000001
-```
-
-For a visual interface, send:
-
-```text
 !rolemenu
-```
 
-Select **ADD SUDOER**, **ADD MODERATOR**, **REMOVE SUDOER**, or **REMOVE MODERATOR**, then send the target phone number or JID in the next message. Send `!cancel` to cancel a pending action.
+☠️ Visual role menu
 
-Changes are saved in `data/access-control.json` and survive restarts. A user has one effective non-owner role at a time: promoting someone to sudoer removes their moderator role, and promoting them to moderator removes their sudoer role. The owner cannot be demoted.
+Send:
 
-Role mutations are rate-limited independently from downloads: by default, an admin must wait 5 seconds between changes and can make at most 5 changes per rolling minute. Configure this with `ROLE_COMMAND_COOLDOWN_MS` and `ROLE_COMMAND_MAX_PER_MINUTE` in `.env`. Opening the role menu does not consume a mutation slot; the limit applies when the target JID is submitted.
+!rolemenu
 
-### Rate-limit alerts
+Choose the required action, then submit the target phone number or JID.
 
-You can send real-time alerts to a private WhatsApp log group and/or an HTTPS webhook:
+Cancel a pending action:
 
-```env
-OWNER_LOG_GROUP_JID=120363000000000000@g.us
-ALERT_WEBHOOK_URL=https://your-domain.example/hooks/whatsapp-bot
-```
+!cancel
 
-Add the bot to the private group and use that group’s JID. Every breached download or role-action limit sends an alert containing the timestamp, actor JID, event, reason, and retry time. The webhook receives the same data as JSON. Alert delivery is best-effort and never takes the bot offline if the group or webhook is unavailable.
+Role changes are stored in "data/access-control.json" and persist across restarts.
 
-Keep `OWNER_JID` private and never leave it blank in a production deployment.
+Default protection:
 
-Every owner command is appended to `data/owner-audit.jsonl` with an ISO timestamp, sender JID, command name, and outcome. The log intentionally does not record command arguments or message contents. It is ignored by Git and should be backed up or rotated according to your retention policy.
+- 5-second cooldown between role changes.
+- Maximum 5 changes per rolling minute.
+- The owner cannot be demoted.
+- Each user has one effective non-owner role.
 
-The Devil Gate site uses a standard `Ubuntu/Chrome` browser identity, requests one WhatsApp-generated code, shows its Captain Yami black-and-crimson loading UI, and exports the saved auth files as a compressed portable session ID. WhatsApp may not show a push notification; manually open **Linked devices → Link a device → Link with phone number**.
+Configure the limits using "ROLE_COMMAND_COOLDOWN_MS" and "ROLE_COMMAND_MAX_PER_MINUTE".
 
-## Commands
+---
 
-- `!ping` replies `pong`
-- `!help` shows help
-- `!mp3 <youtube-url>` extracts YouTube audio as an MP3 file
-- `!tiktok <url>` downloads a public TikTok video
-- `!instagram <url>` downloads a public Instagram Reel
+⚔️ 𝟎𝟕. 𝐂𝐎𝐌𝐌𝐀𝐍𝐃 𝐆𝐑𝐈𝐌𝐎𝐈𝐑𝐄
 
-### Group management
+⚡ Basic commands
 
-In a WhatsApp group, members can use:
+Command| Ability
+"!ping"| Test the bot's response
+"!help"| Display help
+"!about"| Show bot information
+"!services"| Display available services
+"!contact"| Show contact information
+"!image"| Display the configured image
+"!ownerhelp"| View authorized owner commands
+"!rolemenu"| Open role management
 
-```text
+🎬 Media abilities
+
+Command| Ability
+"!mp3 <youtube-url>"| Extract YouTube audio as MP3
+"!audio <youtube-url>"| Extract audio
+"!tiktok <url>"| Download a public TikTok video
+"!instagram <url>"| Download a public Instagram Reel
+"!download <url>"| Use the supported download handler
+"!yt <youtube-url>"| YouTube download alias
+"!youtube <youtube-url>"| YouTube download alias
+
+Media commands depend on the handlers implemented in your project.
+
+Only public, accessible social-media posts are supported. Private, login-required, age-restricted, or unavailable posts are rejected.
+
+---
+
+🛡️ 𝟎𝟖. 𝐆𝐑𝐎𝐔𝐏 𝐃𝐎𝐌𝐈𝐍𝐀𝐓𝐈𝐎𝐍
+
+👥 Member commands
+
 !groupinfo
 !admins
-```
 
-Group admins can use:
+👑 Group administrator commands
 
-```text
 !tagall
 !welcome on
 !welcome off
@@ -103,66 +203,204 @@ Group admins can use:
 !goodbye off
 !antilink on
 !antilink off
-```
 
-Welcome and goodbye messages listen to WhatsApp participant events. When `antilink` is enabled, links from non-admins are deleted and the sender is notified. Settings are stored per group in `data/group-settings.json`, which is ignored by Git. New groups start with welcome, goodbye, and antilink disabled.
+🩸 Protection system
 
-Commands such as `!about`, `!services`, `!contact`, and `!image` show a decorated live loading card before the final response. The reusable helper is in `src/ui/loading.js`; use `showLoading(sock, jid, { title, steps, finalText })` in any new command.
+- Welcome new participants.
+- Send goodbye messages when participants leave.
+- Delete links sent by non-admins when anti-link is enabled.
+- Notify users when their links are removed.
+- Store settings separately for each group.
 
-Owner and role-management responses use the same helper with a fast `OWNER CONTROL` animation. This covers successful commands, permission denials, role prompts, and the visual role/owner menus. The shorter timing keeps administrative commands responsive while still giving users visible feedback.
+Group settings are saved in:
 
-Commands also react to the original WhatsApp message: successful commands use category-specific reactions such as `✅`, `📥`, `🛡️`, or `👑`; failures use `❌`. Optional audio feedback can be enabled with local files:
+data/group-settings.json
 
-```env
+New groups start with welcome, goodbye, and anti-link disabled.
+
+---
+
+🔥 𝟎𝟗. 𝐃𝐄𝐕𝐈𝐋 𝐋𝐎𝐀𝐃𝐈𝐍𝐆 𝐒𝐘𝐒𝐓𝐄𝐌
+
+Commands such as "!about", "!services", "!contact", and "!image" can show decorated loading cards before the final response.
+
+Reusable helper:
+
+showLoading(sock, jid, {
+  title,
+  steps,
+  finalText
+});
+
+Location:
+
+src/ui/loading.js
+
+Owner controls and role-management responses use the same visual system with a faster "OWNER CONTROL" animation.
+
+⚡ Reactions and sound effects
+
+Successful commands can react with category-specific emojis:
+
+- ✅ Success
+- 📥 Downloads
+- 🛡️ Protection
+- 👑 Owner actions
+- ❌ Failure
+
+Optional sound configuration:
+
 COMMAND_SUCCESS_SOUND=./media/success.ogg
 COMMAND_FAILURE_SOUND=./media/failure.ogg
-```
 
-The sound files are only sent when they exist. The reusable feedback helper is `src/ui/feedback.js`.
+Sounds are sent only when the configured files exist.
 
-## Download rate limiting
+---
 
-The `!download`, `!yt`, and `!youtube` commands are limited per WhatsApp user:
+⏳ 𝟏𝟎. 𝐑𝐀𝐓𝐄 𝐋𝐈𝐌𝐈𝐓𝐒 & 𝐃𝐄𝐕𝐈𝐋 𝐀𝐋𝐄𝐑𝐓𝐒
 
-- One active download per user
-- One new download every 60 seconds per user
+Download protection
 
-Change the cooldown in `.env` with `DOWNLOAD_COOLDOWN_MS`, for example:
+- One active download per user.
+- One new download every 60 seconds per user.
+- MP3 size limit: 32 MB.
+- TikTok and Instagram file limit: 64 MB.
 
-```env
+Change the download cooldown:
+
 DOWNLOAD_COOLDOWN_MS=120000
-```
 
-The limiter is in `src/rate-limit.js`. For multiple bot instances, use a shared store such as Redis instead of the in-memory limiter.
+This example sets the cooldown to 120 seconds.
 
-The `!mp3` and `!audio` commands use `yt-dlp` and `ffmpeg` to extract 128K MP3 audio. MP3 files are limited to 32 MB before being sent to WhatsApp.
+Temporary media cache
 
-TikTok and Instagram Reels use the same `yt-dlp` tool, progress cards, cleanup, 64 MB limit, rate limiter, and download reactions. They support public URLs only; private, login-required, age-restricted, or unavailable posts are rejected rather than bypassed.
+.cache/media/
 
-### Temporary social-media cache
+Default cache settings:
 
-TikTok and Instagram files are temporarily stored in `.cache/media/` before sending. The cache key is derived from the platform and URL, so a repeated request can send a valid cached file immediately instead of downloading it again. Cached files expire after 15 minutes by default and the cache is capped at 512 MB. Configure `MEDIA_CACHE_TTL_MS` and `MEDIA_CACHE_MAX_BYTES` in `.env`. Expired and oldest files are removed automatically, and failed downloads are deleted immediately.
+- Expiration: 15 minutes.
+- Maximum cache size: 512 MB.
+- Expired and oldest files are cleaned automatically.
+- Failed downloads are removed.
 
-## Automatic tool installation
+Optional alert destinations
 
-`npm start` automatically runs `scripts/ensure-tools.js` before starting the bot. It:
+OWNER_LOG_GROUP_JID=120363000000000000@g.us
+ALERT_WEBHOOK_URL=https://your-domain.example/hooks/whatsapp-bot
 
-- Installs `yt-dlp` into the project-local `.tools/yt-dlp-venv/` environment if missing.
-- Installs system `ffmpeg` with passwordless `sudo` and `apt-get` if missing.
-- Runs only when the required tool is not already available.
+Configure only destinations you control. Alert delivery is best-effort and does not intentionally take the bot offline when a destination is unavailable.
 
-## Crash recovery
+---
 
-`npm start` runs `scripts/run-bot.js`, which supervises the Captain Yami process. Unexpected exits are logged to `data/crash-recovery.jsonl` with timestamps, exit code or signal, child uptime, restart attempt, and backoff delay. The supervisor restarts the bot with exponential backoff up to 30 seconds and forwards `SIGINT`/`SIGTERM` for clean shutdown.
+🔧 𝟏𝟏. 𝐀𝐔𝐓𝐎𝐌𝐀𝐓𝐈𝐂 𝐓𝐎𝐎𝐋 𝐒𝐘𝐒𝐓𝐄𝐌
 
-The owner command `!ownerrestart` exits with a supervisor restart code, while `!ownershutdown` exits cleanly and stays stopped.
+The startup process runs:
 
-If automatic `ffmpeg` installation is not permitted on your server, install it manually with:
+scripts/ensure-tools.js
 
-```bash
-sudo apt-get update && sudo apt-get install -y ffmpeg
-```
+It checks for required tools and can install missing components:
 
-Edit `src/index.js`, especially `handleMessage()`, to add your own behavior. Login state is stored in `auth_info/` and reused on later starts.
+- "yt-dlp" in a project-local Python environment.
+- "ffmpeg" using system package management where permitted.
 
-> `1234-sant` cannot be used as a custom WhatsApp login code; WhatsApp generates the pairing code. Treat the exported session ID and `auth_info/` as passwords: never share them or place them in public logs.
+For Ubuntu or Debian servers, install FFmpeg manually if necessary:
+
+sudo apt-get update
+sudo apt-get install -y ffmpeg
+
+Some hosting panels do not provide passwordless "sudo" or system package installation. In that case, install the required tools through your hosting provider or configure compatible binaries.
+
+---
+
+♻️ 𝟏𝟐. 𝐂𝐑𝐀𝐒𝐇 𝐑𝐄𝐂𝐎𝐕𝐄𝐑𝐘
+
+The supervisor runs:
+
+scripts/run-bot.js
+
+Features include:
+
+- Automatic recovery after unexpected exits.
+- Exponential restart backoff up to 30 seconds.
+- Clean shutdown signal forwarding.
+- Crash records in "data/crash-recovery.jsonl".
+
+Owner controls:
+
+!ownerrestart
+!ownershutdown
+
+The restart command requests a supervised restart. The shutdown command exits cleanly and leaves the process stopped.
+
+---
+
+📂 𝟏𝟑. 𝐏𝐑𝐎𝐉𝐄𝐂𝐓 𝐆𝐑𝐈𝐌𝐎𝐈𝐑𝐄
+
+whatsapp-baileys-bot/
+├── index.js
+├── package.json
+├── .env.example
+├── src/
+│   ├── index.js
+│   ├── owner-commands.js
+│   ├── rate-limit.js
+│   └── ui/
+│       ├── loading.js
+│       └── feedback.js
+├── scripts/
+│   ├── ensure-tools.js
+│   └── run-bot.js
+├── data/
+│   ├── access-control.json
+│   ├── group-settings.json
+│   └── owner-audit.jsonl
+├── auth_info/
+└── .cache/
+    └── media/
+
+This is a representative structure; some generated files and folders appear only after the bot runs.
+
+Customize command behavior in "src/index.js", especially "handleMessage()".
+
+---
+
+🔐 𝟏𝟒. 𝐒𝐄𝐂𝐔𝐑𝐈𝐓𝐘 𝐖𝐀𝐑𝐍𝐈𝐍𝐆
+
+«☠️ YOUR SESSION IS YOUR KINGDOM. PROTECT IT.»
+
+Never commit or publicly share:
+
+- "SESSION_ID"
+- "PAIRING_SITE_KEY"
+- "auth_info/"
+- ".env"
+- Private webhook secrets
+
+The project should ignore credentials, session data, caches, and private logs in Git.
+
+Owner commands are recorded in:
+
+data/owner-audit.jsonl
+
+The audit log stores timestamps, sender JIDs, command names, and outcomes without intentionally recording command arguments or message contents.
+
+---
+
+🩸 𝟏𝟓. 𝐂𝐎𝐍𝐓𝐀𝐂𝐓 𝐓𝐇𝐄 𝐃𝐄𝐕𝐈𝐋
+
+- 👑 Developer: Saint
+- 📱 WhatsApp: +263714373922 / +263784970429
+- 🕷️ Telegram: "@saintbypass" (https://t.me/saintbypass)
+- ⚔️ GitHub: "blackclover20007" (https://github.com/blackclover20007)
+- 🔑 Session Site: "Captain Yami Session Site" (https://github.com/blackclover20007/captain-yami-session-site)
+
+---
+
+<p align="center">
+  <b>☠️━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━☠️</b><br>
+  🔥 <b>CAPTAIN YAMI BOT</b> 🔥<br>
+  <i>THE DEVIL GATE IS OPEN</i><br><br>
+  <b>🍀 POWER • CONTROL • FREEDOM 🍀</b><br>
+  <b>“BREAK YOUR LIMITS.”</b><br>
+  <b>☠️━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━☠️</b>
+</p>
