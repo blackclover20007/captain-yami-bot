@@ -16,23 +16,7 @@ npm install
 cp .env.example .env
 ```
 
-The bot no longer asks for a phone number in the console. First run the browser-based **Captain Yami Devil Gate** session site:
-
-```bash
-npm run session-site
-```
-
-Open the Replit web URL, enter the WhatsApp number in international format, follow the on-screen linking instructions, and copy the generated `YAMI_SESSION_V1...` value. Put it in Replit **Secrets** as `SESSION_ID`, then start the bot with `npm start`. The bot restores that session and refuses to start without valid credentials.
-
-For a public Replit deployment, set `PAIRING_SITE_KEY` in Secrets and enter the same key in the site. Never commit `SESSION_ID`, `PAIRING_SITE_KEY`, or `auth_info/`.
-
-### Render pairing site
-
-The included `render.yaml` creates a Node web service named `captain-yami-session-site`. Deploy the repository as a Render Blueprint, let Render generate `PAIRING_SITE_KEY`, open the service URL, and enter that generated key in the Devil Gate form. Copy the resulting session ID into the bot host's `SESSION_ID` secret. The pairing service must keep its `auth_info/` directory on a persistent disk or be used for one pairing session at a time; the session ID is the portable backup.
-
-### Replit pairing site
-
-Import the repository into Replit, keep the included `.replit`, and run `npm run session-site`. Replit exposes port 3000 automatically. Add `PAIRING_SITE_KEY` as a Secret, enter it in the form, and copy the generated session ID into the bot deployment. Do not run the pairing site and bot in the same Replit process; they are separate workloads.
+The bot no longer asks for a phone number in the console. Use the separate public [Captain Yami Session Site](https://github.com/blackclover20007/captain-yami-session-site) to generate a `YAMI_SESSION_V1...` value, then add it to the bot host as `SESSION_ID`. Start the bot with `npm start`; it restores that session and refuses to start without valid credentials. Never commit `SESSION_ID`, `PAIRING_SITE_KEY`, or `auth_info/`.
 
 Set `OWNER_JID` in `.env` to your WhatsApp JID before using owner commands:
 
