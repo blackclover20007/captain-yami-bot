@@ -4,6 +4,7 @@ import path from 'node:path';
 
 const crashLogPath = path.resolve('./data/crash-recovery.jsonl');
 const restartExitCode = 75;
+const terminalSessionExitCode = 78;
 const maxRestartDelayMs = 30000;
 let shuttingDown = false;
 let child = null;
@@ -42,7 +43,7 @@ function startChild() {
   child.on('exit', async (code, signal) => {
     child = null;
 
-    if (shuttingDown || (code === 0 && !signal)) {
+    if (shuttingDown || (code === 0 && !signal) || code === terminalSessionExitCode) {
       await writeRecoveryLog({
         event: 'clean_exit',
         code,

@@ -106,6 +106,8 @@ The expected response contains `ok: true` and `service: "captain-yami-bot"`. The
 
 **Important:** Render's free Web Service can sleep after inactivity. Use an always-on plan for reliable production message handling. Never put `SESSION_ID` in GitHub, logs, screenshots, or public chat.
 
+If Render logs `statusCode: 440`, WhatsApp has replaced or invalidated the linked companion session. This is not a Render build failure. In the session site, delete the old slot, create a fresh session, replace the Render `SESSION_ID` secret, and deploy again. The supervisor now stops cleanly for terminal session errors instead of repeatedly restarting the invalid credential.
+
 «⚠️ WhatsApp generates the pairing code. You cannot choose an arbitrary login code such as "1234-sant".»
 
 Never share your session ID or authentication files. They can grant access to your WhatsApp account.

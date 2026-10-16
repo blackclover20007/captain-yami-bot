@@ -147,8 +147,8 @@ async function startBot() {
           { statusCode },
           'WhatsApp session ended and needs manual attention'
         );
-        logger.error('For logout, delete auth_info and run the bot again to relink.');
-        process.exit(1);
+        logger.error('Generate a fresh YAMI_SESSION_V1 value on the Captain Yami Session Site, replace SESSION_ID in Render, and deploy again.');
+        process.exit(78);
       }
 
       // 515 (restart required), 408 (timeout), 503 (unavailable),
