@@ -114,7 +114,10 @@ async function startBot() {
     browser: Browsers.ubuntu('Chrome'),
     logger,
     markOnlineOnConnect: false,
-    syncFullHistory: false
+    syncFullHistory: false,
+    fireInitQueries: false,
+    connectTimeoutMs: 60000,
+    defaultQueryTimeoutMs: 120000
   });
 
   activeSocket = sock;
