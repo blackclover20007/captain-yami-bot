@@ -1,0 +1,39 @@
+services:
+  - type: web
+    name: captain-yami-bot
+    runtime: node
+    plan: free
+    branch: main
+    buildCommand: npm install --omit=dev
+    startCommand: npm run start:render
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: NODE_ENV
+        value: production
+      - key: LOG_LEVEL
+        value: info
+      - key: SESSION_ID
+        sync: false
+      - key: OWNER_JID
+        sync: false
+      - key: SUDO_JIDS
+        sync: false
+      - key: MODERATOR_JIDS
+        sync: false
+      - key: OWNER_LOG_GROUP_JID
+        sync: false
+      - key: ALERT_WEBHOOK_URL
+        sync: false
+      - key: BOT_NAME
+        value: Captain Yami Bot
+      - key: BOT_VERSION
+        value: Yami Black Clover
+      - key: COMMAND_PREFIX
+        value: "!"
+      - key: CONTACT_NUMBERS
+        value: "+263714373922 / +263784970429"
+      - key: OWNER_TELEGRAM
+        value: "@saintbypass"

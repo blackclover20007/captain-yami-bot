@@ -89,6 +89,23 @@ Generate a session using the official project session site:
 
 The bot restores the saved session and refuses to start if valid credentials are missing.
 
+---
+
+## Deploy the bot on Render
+
+This repository includes a `render.yaml` Blueprint for a Render **Web Service**. The service runs the bot supervisor and a `/health` endpoint. It uses the portable `SESSION_ID` on every startup and does not require a committed `auth_info/` directory.
+
+1. Open Render and choose **New → Blueprint**.
+2. Select `blackclover20007/captain-yami-bot` on the `main` branch.
+3. Apply the Blueprint.
+4. Enter the generated session value as the secret `SESSION_ID` environment variable. It must begin with `YAMI_SESSION_V1.`.
+5. Set `OWNER_JID` to the WhatsApp JID that should control owner commands.
+6. Deploy and check `https://<your-render-bot-service>.onrender.com/health`.
+
+The expected response contains `ok: true` and `service: "captain-yami-bot"`. The Blueprint uses `npm install --omit=dev`, `npm run start:render`, and auto-deploys commits from `main`.
+
+**Important:** Render's free Web Service can sleep after inactivity. Use an always-on plan for reliable production message handling. Never put `SESSION_ID` in GitHub, logs, screenshots, or public chat.
+
 «⚠️ WhatsApp generates the pairing code. You cannot choose an arbitrary login code such as "1234-sant".»
 
 Never share your session ID or authentication files. They can grant access to your WhatsApp account.
