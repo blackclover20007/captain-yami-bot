@@ -42,6 +42,21 @@ const logger = P({
   level: process.env.LOG_LEVEL || 'info'
 });
 
+const runtimeStatusPath = path.resolve('./data/runtime-status.json');
+async function updateRuntimeStatus(status, extra = {}) {
+  try {
+    await mkdir(path.dirname(runtimeStatusPath), { recursive: true });
+    await writeFile(runtimeStatusPath, JSON.stringify({
+      status,
+      updatedAt: new Date().toISOString(),
+      reconnectAttempts,
+      ...extra
+    }, null, 2));
+  } catch (error) {
+    logger.warn({ error: error.message }, 'Could not write runtime status');
+  }
+}
+
 const downloadLimiter = new DownloadRateLimiter({
   cooldownMs: Number(process.env.DOWNLOAD_COOLDOWN_MS || 60000),
   maxConcurrentPerUser: 1
@@ -99,10 +114,12 @@ function scheduleReconnect(reason) {
 async function startBot() {
   if (shuttingDown || activeSocket) return;
 
+  await updateRuntimeStatus('starting');
   await restoreSessionFromEnvironment();
   const { state, saveCreds } = await useMultiFileAuthState('./auth_info');
 
   if (!state.creds.registered) {
+    await updateRuntimeStatus('missing_session');
     logger.error('No registered WhatsApp session found in auth_info/. Use the Captain Yami Session ID website first.');
     process.exit(0);
   }
@@ -121,12 +138,14 @@ async function startBot() {
   });
 
   activeSocket = sock;
+  await updateRuntimeStatus('connecting');
 
   sock.ev.on('creds.update', saveCreds);
 
   sock.ev.on('connection.update', async ({ connection, lastDisconnect }) => {
     if (connection === 'open') {
       reconnectAttempts = 0;
+      await updateRuntimeStatus('connected', { phone: sock.user?.id || '' });
       logger.info(`${config.name} connected successfully.`);
 
       if (!connectionNoticeSent && ownerController.ownerJid) {
@@ -139,6 +158,7 @@ async function startBot() {
       const statusCode = lastDisconnect?.error?.output?.statusCode;
 
       if (activeSocket === sock) activeSocket = null;
+      await updateRuntimeStatus('disconnected', { statusCode: statusCode || null });
 
       if (
         statusCode === DisconnectReason.loggedOut ||
@@ -151,6 +171,7 @@ async function startBot() {
           'WhatsApp session ended and needs manual attention'
         );
         logger.error('Generate a fresh YAMI_SESSION_V1 value on the Captain Yami Session Site, replace SESSION_ID in Render, and deploy again.');
+        await updateRuntimeStatus('terminal_error', { statusCode });
         process.exit(78);
       }
 

@@ -104,6 +104,12 @@ This repository includes a `render.yaml` Blueprint for a Render **Web Service**.
 
 The expected response contains `ok: true` and `service: "captain-yami-bot"`. The Blueprint uses `npm install --omit=dev`, `npm run start:render`, and auto-deploys commits from `main`.
 
+Render monitoring endpoints:
+
+- `/health` — liveness; returns HTTP 200 while the Render process is alive and includes the latest bot runtime state.
+- `/ready` — readiness; returns HTTP 200 only after WhatsApp is connected, and HTTP 503 while connecting or reconnecting. Do not use this as Render's restart health check or transient reconnects may cause unnecessary restarts.
+- `/status` — diagnostic runtime state, including `connected`, `connecting`, `disconnected`, `missing_session`, or `terminal_error`.
+
 **Important:** Render's free Web Service can sleep after inactivity. Use an always-on plan for reliable production message handling. Never put `SESSION_ID` in GitHub, logs, screenshots, or public chat.
 
 If Render logs `statusCode: 440`, WhatsApp has replaced or invalidated the linked companion session. This is not a Render build failure. In the session site, delete the old slot, create a fresh session, replace the Render `SESSION_ID` secret, and deploy again. The supervisor now stops cleanly for terminal session errors instead of repeatedly restarting the invalid credential.

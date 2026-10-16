@@ -8,5 +8,6 @@ data/owner-audit.jsonl
 data/access-control.json
 data/group-settings.json
 data/crash-recovery.jsonl
+data/runtime-status.json
 *.log
 .DS_Store
