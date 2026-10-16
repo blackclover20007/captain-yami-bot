@@ -610,20 +610,40 @@ async function sendConnectionNotice(sock) {
     });
   } catch (error) {
     logger.warn({ error: error.message }, 'Could not send connection notice');
+    try {
+      await sock.sendMessage(ownerController.ownerJid, {
+        text: [
+          `CONNECTED: ${config.name}`,
+          `VERSION: ${config.version}`,
+          `OWNER: ${config.ownerTelegram}`,
+          'Status: online',
+          '(The branded image could not be downloaded, so this text notice was sent instead.)'
+        ].join('\n')
+      });
+    } catch (fallbackError) {
+      logger.warn({ error: fallbackError.message }, 'Could not send text connection notice fallback');
+    }
   }
 }
 
 async function sendMainMenu(sock, jid) {
-  await sock.sendMessage(jid, {
-    image: { url: config.imageUrl },
-    caption: [
-      config.name,
-      config.version,
-      '',
-      `Owner: ${config.ownerTelegram}`,
-      `WhatsApp: ${config.contactNumbers}`
-    ].join('\n')
-  });
+  try {
+    await sock.sendMessage(jid, {
+      image: { url: config.imageUrl },
+      caption: [
+        config.name,
+        config.version,
+        '',
+        `Owner: ${config.ownerTelegram}`,
+        `WhatsApp: ${config.contactNumbers}`
+      ].join('\n')
+    });
+  } catch (error) {
+    logger.warn({ error: error.message }, 'Could not send menu image; using text fallback');
+    await sock.sendMessage(jid, {
+      text: `${config.name}\n${config.version}\nOwner: ${config.ownerTelegram}\nWhatsApp: ${config.contactNumbers}`
+    });
+  }
 
   return sock.sendMessage(jid, {
     text: [
