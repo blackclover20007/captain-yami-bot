@@ -82,7 +82,7 @@ const groupController = createGroupController({
 let activeSocket = null;
 let reconnectTimer = null;
 let reconnectAttempts = 0;
-const maxReconnectAttempts = Number(process.env.MAX_RECONNECT_ATTEMPTS || 10);
+const maxReconnectAttempts = Number(process.env.MAX_RECONNECT_ATTEMPTS || 0);
 let shuttingDown = false;
 let connectionNoticeSent = false;
 
@@ -95,7 +95,7 @@ function getReconnectDelay() {
 function scheduleReconnect(reason) {
   if (shuttingDown || reconnectTimer) return;
 
-  if (reconnectAttempts >= maxReconnectAttempts) {
+  if (maxReconnectAttempts > 0 && reconnectAttempts >= maxReconnectAttempts) {
     logger.error({ reason, maxReconnectAttempts }, 'Connection manager reached its retry limit');
     updateRuntimeStatus('reconnect_limit', { reason, maxReconnectAttempts }).finally(() => process.exit(78));
     return;

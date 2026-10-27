@@ -124,7 +124,9 @@ For Render restarts, copy the final session ID into the optional secret `SESSION
 
 For monitoring, use `/health` as Render's health check. `/ready` reports whether the bot is actually connected, `/status` shows the pairing and bot state, and `/manus-routes.json` describes the panel route. The browser panel polls the same status data and shows separate PAIRING and BOT indicators.
 
-After a successful browser pairing, the bot starts automatically and sends the linked WhatsApp number a `CONNECTED: Captain Yami Bot` working notice. The connection manager allows up to 10 automatic reconnect attempts (`MAX_RECONNECT_ATTEMPTS=10`); after that it stops safely and reports `reconnect_limit` instead of looping forever.
+After a successful browser pairing, the bot starts automatically and sends the linked WhatsApp number a `CONNECTED: Captain Yami Bot` working notice. Transient WhatsApp failures use unlimited automatic reconnects by default (`MAX_RECONNECT_ATTEMPTS=0`). Terminal conditions such as logout, session replacement, or a forbidden account still stop safely because retrying invalid credentials cannot restore the session.
+
+For genuinely continuous operation, use an always-on Render plan and keep the final `YAMI_SESSION_V1...` value in the secret `SESSION_ID`. Render's free instance can sleep or be replaced regardless of the bot's reconnect setting.
 
 «⚠️ WhatsApp generates the pairing code. You cannot choose an arbitrary login code such as "1234-sant".»
 
