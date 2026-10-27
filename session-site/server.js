@@ -79,8 +79,9 @@ function stopBot() {
 }
 
 async function startBotIfReady() {
-  if (botChild || !(await registered())) {
-    if (!botChild && !(await registered())) botStatus = 'waiting_for_session';
+  const hasPortableSession = process.env.SESSION_ID?.startsWith('YAMI_SESSION_V1.');
+  if (botChild || (!(await registered()) && !hasPortableSession)) {
+    if (!botChild && !(await registered()) && !hasPortableSession) botStatus = 'waiting_for_session';
     return;
   }
 

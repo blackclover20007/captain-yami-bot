@@ -120,6 +120,8 @@ The bot repository now includes the Captain Yami pairing panel at `/`. Deploy on
 
 The panel also includes **Reset session**, **Copy ID**, and **Download TXT** controls. The session ID is optional when using the unified service, because the bot starts directly from the credentials created by the panel. Keep the ID private if you export it for another host.
 
+For Render restarts, copy the final session ID into the optional secret `SESSION_ID` environment variable. Render's free filesystem is not permanent; keeping this secret lets the unified service restore the bot automatically after a new instance starts. If it is not set, pair again from the panel after an instance replacement.
+
 For monitoring, use `/health` as Render's health check. `/ready` reports whether the bot is actually connected, `/status` shows the pairing and bot state, and `/manus-routes.json` describes the panel route. The browser panel polls the same status data and shows separate PAIRING and BOT indicators.
 
 «⚠️ WhatsApp generates the pairing code. You cannot choose an arbitrary login code such as "1234-sant".»
