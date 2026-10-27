@@ -108,6 +108,44 @@ async function finishPairing(sock, phone) {
   pairing = { ...pairing, delivery: 'web', message: 'WhatsApp linked. Captain Yami Bot is starting now. Copy the session only if you also want a second deployment.' };
 }
 
+function attachPairingSocket(sock, mode, phone, saveCreds) {
+  activeSocket = sock;
+  sock.ev.on('creds.update', (update) => persistCredentials(saveCreds, update));
+  sock.ev.on('connection.update', async ({ connection, qr, lastDisconnect }) => {
+    if (qr && mode === 'qr') {
+      pairing = { ...pairing, status: 'qr', qr: await QRCode.toDataURL(qr, { width: 320, margin: 2 }), message: 'Scan the QR with WhatsApp → Linked devices → Link a device.' };
+    }
+    if (connection === 'open') await finishPairing(sock, phone);
+    if (connection === 'close' && pairing.status !== 'complete') {
+      const code = lastDisconnect?.error?.output?.statusCode;
+      if (code === 515 && mode === 'code' && pairing.code) {
+        pairing = { ...pairing, status: 'reconnecting', qr: '', message: 'WhatsApp accepted the code. Reopening the Devil Gate automatically…' };
+        activeSocket = null;
+        await reconnectPairing(mode, phone);
+        return;
+      }
+      activeSocket = null;
+      pairing = { ...pairing, status: 'failed', code: '', qr: '', sessionId: '', message: `WhatsApp closed the gate (${code || 'temporary error'}). Remove an old linked device and try again.` };
+    }
+  });
+}
+
+async function reconnectPairing(mode, phone) {
+  const { state, saveCreds } = await useMultiFileAuthState(authDir);
+  saveCredsPromise = Promise.resolve();
+  const sock = makeWASocket({
+    auth: state,
+    browser: Browsers.ubuntu('Chrome'),
+    logger,
+    markOnlineOnConnect: false,
+    syncFullHistory: false,
+    fireInitQueries: false,
+    connectTimeoutMs: 60000,
+    defaultQueryTimeoutMs: 120000
+  });
+  attachPairingSocket(sock, mode, phone, saveCreds);
+}
+
 async function startPairing(mode, phone, requestedSiteKey) {
   if (!keyIsValid(requestedSiteKey)) throw new Error('Invalid gate key.');
   if (activeSocket || ['waiting', 'code', 'qr', 'awakening'].includes(pairing.status)) throw new Error('A pairing ritual is already active.');
@@ -133,19 +171,7 @@ async function startPairing(mode, phone, requestedSiteKey) {
     connectTimeoutMs: 60000,
     defaultQueryTimeoutMs: 120000
   });
-  activeSocket = sock;
-  sock.ev.on('creds.update', (update) => persistCredentials(saveCreds, update));
-  sock.ev.on('connection.update', async ({ connection, qr, lastDisconnect }) => {
-    if (qr && mode === 'qr') {
-      pairing = { ...pairing, status: 'qr', qr: await QRCode.toDataURL(qr, { width: 320, margin: 2 }), message: 'Scan the QR with WhatsApp → Linked devices → Link a device.' };
-    }
-    if (connection === 'open') await finishPairing(sock, phone);
-    if (connection === 'close' && pairing.status !== 'complete') {
-      const code = lastDisconnect?.error?.output?.statusCode;
-      activeSocket = null;
-      pairing = { ...pairing, status: 'failed', code: '', qr: '', sessionId: '', message: `WhatsApp closed the gate (${code || 'temporary error'}). Remove an old linked device and try again.` };
-    }
-  });
+  attachPairingSocket(sock, mode, phone, saveCreds);
 
   if (mode === 'code') {
     pairing = { ...pairing, status: 'waiting', message: 'Requesting a private phone-linking code…' };
