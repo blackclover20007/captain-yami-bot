@@ -78,7 +78,7 @@ function stopBot() {
   botStatus = 'waiting_for_session';
 }
 
-async function startBotIfReady() {
+async function startBotIfReady(ownerJid = '') {
   const hasPortableSession = process.env.SESSION_ID?.startsWith('YAMI_SESSION_V1.');
   if (botChild || (!(await registered()) && !hasPortableSession)) {
     if (!botChild && !(await registered()) && !hasPortableSession) botStatus = 'waiting_for_session';
@@ -88,7 +88,11 @@ async function startBotIfReady() {
   botStatus = 'starting';
   botChild = spawn(process.execPath, [path.join(projectRoot, 'scripts', 'run-bot.js')], {
     cwd: projectRoot,
-    env: { ...process.env, SESSION_ID: '' },
+    env: {
+      ...process.env,
+      SESSION_ID: '',
+      OWNER_JID: process.env.OWNER_JID || ownerJid
+    },
     stdio: 'inherit'
   });
   botChild.on('spawn', () => { botStatus = 'starting'; });
@@ -104,7 +108,7 @@ async function finishPairing(sock, phone) {
   pairing = { ...pairing, status: 'complete', sessionId, qr: '', delivery: 'web', message: 'Session linked. The bot is awakening from the Devil Gate…' };
   activeSocket = null;
   await sock.end?.(undefined);
-  await startBotIfReady();
+  await startBotIfReady(phone ? `${phone}@s.whatsapp.net` : '');
   pairing = { ...pairing, delivery: 'web', message: 'WhatsApp linked. Captain Yami Bot is starting now. Copy the session only if you also want a second deployment.' };
 }
 

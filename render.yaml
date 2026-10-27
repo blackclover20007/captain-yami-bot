@@ -15,6 +15,8 @@ services:
         value: production
       - key: LOG_LEVEL
         value: info
+      - key: MAX_RECONNECT_ATTEMPTS
+        value: 10
       - key: SESSION_AUTH_DIR
         value: ./auth_info
       - key: SESSION_ID
