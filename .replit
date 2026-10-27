@@ -1,0 +1,9 @@
+run = "node session-site/server.js"
+entrypoint = "session-site/server.js"
+
+[deployment]
+run = ["node", "session-site/server.js"]
+
+[[ports]]
+localPort = 3000
+externalPort = 80

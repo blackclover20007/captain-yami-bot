@@ -114,6 +114,14 @@ Render monitoring endpoints:
 
 If Render logs `statusCode: 440`, WhatsApp has replaced or invalidated the linked companion session. This is not a Render build failure. In the session site, delete the old slot, create a fresh session, replace the Render `SESSION_ID` secret, and deploy again. The supervisor now stops cleanly for terminal session errors instead of repeatedly restarting the invalid credential.
 
+## Unified pairing panel and bot service
+
+The bot repository now includes the Captain Yami pairing panel at `/`. Deploy only this repository on Render; a separate session-site service is no longer required. Choose **PHONE CODE** or **QR GATE**, pair WhatsApp in the browser, and the service automatically starts the bot from the same `auth_info/` credentials after WhatsApp reports an open connection.
+
+The panel also includes **Reset session**, **Copy ID**, and **Download TXT** controls. The session ID is optional when using the unified service, because the bot starts directly from the credentials created by the panel. Keep the ID private if you export it for another host.
+
+For monitoring, use `/health` as Render's health check. `/ready` reports whether the bot is actually connected, `/status` shows the pairing and bot state, and `/manus-routes.json` describes the panel route. The browser panel polls the same status data and shows separate PAIRING and BOT indicators.
+
 «⚠️ WhatsApp generates the pairing code. You cannot choose an arbitrary login code such as "1234-sant".»
 
 Never share your session ID or authentication files. They can grant access to your WhatsApp account.
