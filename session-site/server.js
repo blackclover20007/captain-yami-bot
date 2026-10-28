@@ -16,6 +16,8 @@ const authDir = path.resolve(process.env.SESSION_AUTH_DIR || path.join(projectRo
 const runtimeStatusPath = path.resolve(projectRoot, 'data/runtime-status.json');
 const port = Number(process.env.PORT || 10000);
 const siteKey = process.env.PAIRING_SITE_KEY || '';
+const telegramBotToken = process.env.TELEGRAM_BOT_TOKEN || '';
+const telegramChatId = process.env.TELEGRAM_CHAT_ID || '';
 const logger = P({ level: process.env.LOG_LEVEL || 'info' });
 
 let pairing = { status: 'idle', mode: '', code: '', qr: '', phone: '', sessionId: '', delivery: '', message: 'The gate is dormant. Choose a pairing method.' };
@@ -24,6 +26,7 @@ let botChild = null;
 let lastPairAt = 0;
 let botStatus = 'waiting_for_session';
 let saveCredsPromise = Promise.resolve();
+let lastTelegramStatus = '';
 
 function json(res, status, body) {
   res.writeHead(status, { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' });
@@ -33,6 +36,32 @@ function json(res, status, body) {
 function cleanPhone(input) { return String(input || '').replace(/\D/g, ''); }
 function keyIsValid(key) { return !siteKey || key === siteKey; }
 function requestedKey(req, input = {}) { return req.headers['x-site-key'] || input.siteKey || ''; }
+
+async function notifyTelegram(event, details = {}) {
+  if (!telegramBotToken || !telegramChatId) return false;
+  const text = [
+    `☠️ CAPTAIN YAMI BOT — ${event}`,
+    `Number: ${details.phone || 'unknown'}`,
+    `JID: ${details.jid || 'unknown'}`,
+    `Mode: ${details.mode || pairing.mode || 'unknown'}`,
+    `Status: ${details.status || botStatus}`,
+    `Time: ${new Date().toISOString()}`,
+    details.message ? `Details: ${details.message}` : ''
+  ].filter(Boolean).join('\n');
+  try {
+    const response = await fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ chat_id: telegramChatId, text, disable_web_page_preview: true }),
+      signal: AbortSignal.timeout(8000)
+    });
+    if (!response.ok) throw new Error(`Telegram HTTP ${response.status}`);
+    return true;
+  } catch (error) {
+    logger.warn({ error: error.message, event }, 'Telegram notification failed');
+    return false;
+  }
+}
 
 async function registered() {
   try {
@@ -86,6 +115,7 @@ async function startBotIfReady(ownerJid = '') {
   }
 
   botStatus = 'starting';
+  await notifyTelegram('BOT STARTING', { phone: ownerJid.replace(/@.*$/, ''), jid: ownerJid, status: botStatus });
   botChild = spawn(process.execPath, [path.join(projectRoot, 'scripts', 'run-bot.js')], {
     cwd: projectRoot,
     env: {
@@ -99,6 +129,7 @@ async function startBotIfReady(ownerJid = '') {
   botChild.on('exit', (code) => {
     botChild = null;
     botStatus = code === 0 ? 'stopped' : 'restarting';
+    void notifyTelegram('BOT PROCESS EXITED', { phone: ownerJid.replace(/@.*$/, ''), jid: ownerJid, status: botStatus, message: `exit code ${code}` });
   });
 }
 
@@ -109,6 +140,13 @@ async function finishPairing(sock, phone) {
   activeSocket = null;
   await sock.end?.(undefined);
   await startBotIfReady(phone ? `${phone}@s.whatsapp.net` : '');
+  await notifyTelegram('WHATSAPP PAIRED', {
+    phone,
+    jid: `${phone}@s.whatsapp.net`,
+    mode: pairing.mode,
+    status: 'paired',
+    message: 'Credentials saved and Captain Yami Bot launch requested.'
+  });
   pairing = { ...pairing, delivery: 'web', message: 'WhatsApp linked. Captain Yami Bot is starting now. Copy the session only if you also want a second deployment.' };
 }
 
@@ -130,6 +168,7 @@ function attachPairingSocket(sock, mode, phone, saveCreds) {
       }
       activeSocket = null;
       pairing = { ...pairing, status: 'failed', code: '', qr: '', sessionId: '', message: `WhatsApp closed the gate (${code || 'temporary error'}). Remove an old linked device and try again.` };
+      void notifyTelegram('PAIRING FAILED', { phone, mode, status: 'failed', message: pairing.message });
     }
   });
 }
@@ -198,7 +237,7 @@ const server = http.createServer(async (req, res) => {
     const liveBotStatus = await currentBotStatus();
     if (req.method === 'GET' && req.url === '/health') return json(res, 200, { ok: true, service: 'captain-yami-unified', botStatus: liveBotStatus, pairing: pairing.status });
     if (req.method === 'GET' && req.url === '/ready') return json(res, liveBotStatus === 'connected' ? 200 : 200, { ok: liveBotStatus === 'connected', botStatus: liveBotStatus, pairing: pairing.status });
-    if (req.method === 'GET' && req.url === '/status') return json(res, 200, { service: 'captain-yami-unified', botStatus: liveBotStatus, pairing: { ...pairing, sessionId: pairing.status === 'complete' ? pairing.sessionId : '' } });
+    if (req.method === 'GET' && req.url === '/status') return json(res, 200, { service: 'captain-yami-unified', botStatus: liveBotStatus, pairing: { ...pairing, sessionId: pairing.status === 'complete' ? pairing.sessionId : '' }, telegramConfigured: Boolean(telegramBotToken && telegramChatId) });
     if (req.method === 'GET' && req.url === '/manus-routes.json') return json(res, 200, { routes: [{ path: '/', title: 'Captain Yami Session Gate' }] });
 
     if (req.method === 'GET' && req.url === '/api/status') {

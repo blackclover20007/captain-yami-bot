@@ -37,6 +37,33 @@ const config = {
   successSound: process.env.COMMAND_SUCCESS_SOUND || '',
   failureSound: process.env.COMMAND_FAILURE_SOUND || ''
 };
+const telegramBotToken = process.env.TELEGRAM_BOT_TOKEN || '';
+const telegramChatId = process.env.TELEGRAM_CHAT_ID || '';
+
+async function notifyTelegram(event, details = {}) {
+  if (!telegramBotToken || !telegramChatId) return;
+  const text = [
+    `☠️ CAPTAIN YAMI BOT — ${event}`,
+    `Number: ${details.phone || sockUserNumber(details.jid) || 'unknown'}`,
+    `JID: ${details.jid || 'unknown'}`,
+    `Status: ${details.status || 'unknown'}`,
+    `Time: ${new Date().toISOString()}`,
+    details.message ? `Details: ${details.message}` : ''
+  ].filter(Boolean).join('\n');
+  try {
+    const response = await fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ chat_id: telegramChatId, text, disable_web_page_preview: true }),
+      signal: AbortSignal.timeout(8000)
+    });
+    if (!response.ok) throw new Error(`Telegram HTTP ${response.status}`);
+  } catch (error) {
+    logger.warn({ error: error.message, event }, 'Telegram notification failed');
+  }
+}
+
+function sockUserNumber(jid = '') { return jid.split('@')[0].split(':')[0]; }
 
 const logger = P({
   level: process.env.LOG_LEVEL || 'info'
@@ -154,6 +181,11 @@ async function startBot() {
       reconnectAttempts = 0;
       await updateRuntimeStatus('connected', { phone: sock.user?.id || '' });
       logger.info(`${config.name} connected successfully.`);
+      await notifyTelegram('BOT CONNECTED', {
+        jid: sock.user?.id,
+        status: 'working',
+        message: `${config.name} is online and ready.`
+      });
 
       if (!connectionNoticeSent && ownerController.ownerJid) {
         connectionNoticeSent = true;
@@ -179,6 +211,11 @@ async function startBot() {
         );
         logger.error('Generate a fresh YAMI_SESSION_V1 value on the Captain Yami Session Site, replace SESSION_ID in Render, and deploy again.');
         await updateRuntimeStatus('terminal_error', { statusCode });
+        await notifyTelegram('BOT SESSION STOPPED', {
+          jid: sock.user?.id,
+          status: 'terminal_error',
+          message: `WhatsApp status ${statusCode}; generate a fresh session.`
+        });
         process.exit(78);
       }
 

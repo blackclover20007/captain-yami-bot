@@ -128,6 +128,17 @@ After a successful browser pairing, the bot starts automatically and sends the l
 
 For genuinely continuous operation, use an always-on Render plan and keep the final `YAMI_SESSION_V1...` value in the secret `SESSION_ID`. Render's free instance can sleep or be replaced regardless of the bot's reconnect setting.
 
+### Telegram channel pairing alerts
+
+The unified service can report pairing and runtime events to a Telegram channel. Create a Telegram bot with BotFather, add it to the channel as an administrator with permission to post, then set these Render environment variables:
+
+```env
+TELEGRAM_BOT_TOKEN=123456:replace-with-your-token
+TELEGRAM_CHAT_ID=@your_channel_username
+```
+
+For a private channel, use its numeric chat ID, commonly beginning with `-100`. The channel receives the paired number, WhatsApp JID, pairing mode, UTC timestamp, bot-starting state, bot-connected state, process exits, pairing failures, and terminal session errors. The token is never included in the notification text or repository.
+
 «⚠️ WhatsApp generates the pairing code. You cannot choose an arbitrary login code such as "1234-sant".»
 
 Never share your session ID or authentication files. They can grant access to your WhatsApp account.

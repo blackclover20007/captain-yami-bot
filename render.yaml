@@ -41,3 +41,7 @@ services:
         value: "+263714373922 / +263784970429"
       - key: OWNER_TELEGRAM
         value: "@saintbypass"
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_CHAT_ID
+        sync: false
