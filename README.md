@@ -118,6 +118,8 @@ If Render logs `statusCode: 440`, WhatsApp has replaced or invalidated the linke
 
 The bot repository now includes the Captain Yami pairing panel at `/`. Deploy only this repository on Render; a separate session-site service is no longer required. Choose **PHONE CODE** or **QR GATE**, pair WhatsApp in the browser, and the service automatically starts the bot from the same `auth_info/` credentials after WhatsApp reports an open connection.
 
+The panel is now branded **Captain Yami — Ultra 1000**. Its live telemetry cards show the unified service name, uptime, site version, and last status scan while the pairing and bot chips continue to update automatically.
+
 The panel also includes **Reset session**, **Copy ID**, and **Download TXT** controls. The session ID is optional when using the unified service, because the bot starts directly from the credentials created by the panel. Keep the ID private if you export it for another host.
 
 For Render restarts, copy the final session ID into the optional secret `SESSION_ID` environment variable. Render's free filesystem is not permanent; keeping this secret lets the unified service restore the bot automatically after a new instance starts. If it is not set, pair again from the panel after an instance replacement.

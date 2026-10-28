@@ -16,6 +16,8 @@ const authDir = path.resolve(process.env.SESSION_AUTH_DIR || path.join(projectRo
 const runtimeStatusPath = path.resolve(projectRoot, 'data/runtime-status.json');
 const port = Number(process.env.PORT || 10000);
 const siteKey = process.env.PAIRING_SITE_KEY || '';
+const siteVersion = 'Ultra 1000';
+const startedAt = new Date().toISOString();
 const logger = P({ level: process.env.LOG_LEVEL || 'info' });
 
 let pairing = { status: 'idle', mode: '', code: '', qr: '', phone: '', sessionId: '', delivery: '', message: 'The gate is dormant. Choose a pairing method.' };
@@ -196,9 +198,9 @@ async function body(req) {
 const server = http.createServer(async (req, res) => {
   try {
     const liveBotStatus = await currentBotStatus();
-    if (req.method === 'GET' && req.url === '/health') return json(res, 200, { ok: true, service: 'captain-yami-unified', botStatus: liveBotStatus, pairing: pairing.status });
+    if (req.method === 'GET' && req.url === '/health') return json(res, 200, { ok: true, service: 'captain-yami-unified', version: siteVersion, startedAt, botStatus: liveBotStatus, pairing: pairing.status });
     if (req.method === 'GET' && req.url === '/ready') return json(res, liveBotStatus === 'connected' ? 200 : 200, { ok: liveBotStatus === 'connected', botStatus: liveBotStatus, pairing: pairing.status });
-    if (req.method === 'GET' && req.url === '/status') return json(res, 200, { service: 'captain-yami-unified', botStatus: liveBotStatus, pairing: { ...pairing, sessionId: pairing.status === 'complete' ? pairing.sessionId : '' } });
+    if (req.method === 'GET' && req.url === '/status') return json(res, 200, { service: 'captain-yami-unified', version: siteVersion, startedAt, uptimeSeconds: Math.floor((Date.now() - Date.parse(startedAt)) / 1000), botStatus: liveBotStatus, pairing: { ...pairing, sessionId: pairing.status === 'complete' ? pairing.sessionId : '' } });
     if (req.method === 'GET' && req.url === '/manus-routes.json') return json(res, 200, { routes: [{ path: '/', title: 'Captain Yami Session Gate' }] });
 
     if (req.method === 'GET' && req.url === '/api/status') {
