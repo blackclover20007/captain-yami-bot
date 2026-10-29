@@ -203,15 +203,20 @@ async function startBot() {
       const incomingText = text || selectedId;
       const ownNumber = sock.user?.id?.split('@')[0]?.split(':')[0];
       const chatNumber = jid.split('@')[0].split(':')[0];
-      const isSelfChat = Boolean(ownNumber && chatNumber && ownNumber === chatNumber);
+      const isSelfChat = Boolean(
+        (ownNumber && chatNumber && ownNumber === chatNumber) ||
+        jid === sock.user?.id ||
+        jid === sock.user?.lid
+      );
       // Baileys marks messages sent from the same phone as fromMe. Permit
       // explicit commands in self-chat, but ignore ordinary outgoing text.
       if (message.key.fromMe && (!isSelfChat || !incomingText?.startsWith(config.prefix))) continue;
+      const commandJid = isSelfChat ? ownerController.ownerJid : jid;
       const senderJid = jid.endsWith('@g.us') ? message.key.participant : jid;
 
       ownerController.recordMessage(incomingText);
 
-      if (ownerController.isBlocked(jid) && !ownerController.isAuthorized(jid)) {
+      if (ownerController.isBlocked(commandJid) && !ownerController.isAuthorized(commandJid)) {
         continue;
       }
 
@@ -226,9 +231,9 @@ async function startBot() {
         continue;
       }
 
-      if (ownerController.isAuthorized(jid) && incomingText) {
+      if (ownerController.isAuthorized(commandJid) && incomingText) {
         try {
-          const result = await ownerController.handle(sock, jid, incomingText, message);
+          const result = await ownerController.handle(sock, commandJid, incomingText, message);
           const handled = result === true || result?.handled;
           if (handled) {
             await sendCommandFeedback({
@@ -260,7 +265,7 @@ async function startBot() {
         }
       }
 
-      if (ownerController.isMaintenance() && !ownerController.isAuthorized(jid)) {
+      if (ownerController.isMaintenance() && !ownerController.isAuthorized(commandJid)) {
         await sock.sendMessage(jid, {
           text: 'The bot is currently in maintenance mode. Please try again later.'
         });
