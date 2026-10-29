@@ -120,6 +120,17 @@ The bot repository now includes the Captain Yami pairing panel at `/`. Deploy on
 
 The panel is now branded **Captain Yami — Ultra 1000**. Its live telemetry cards show the unified service name, uptime, site version, and last status scan while the pairing and bot chips continue to update automatically.
 
+### Automatic Render session delivery
+
+The pairing site can now save each completed `YAMI_SESSION_V1...` value directly into the same Render service. Configure these two private Render environment variables once:
+
+```env
+RENDER_API_KEY=your-Render-API-key
+RENDER_SERVICE_ID=srv-your-service-id
+```
+
+The API key needs permission to update service environment variables. After they are configured, pairing calls Render's official environment-variable endpoint and updates `SESSION_ID` automatically; no copy-and-paste is needed for future pairings. The key is never returned by `/status` or placed in the session ID. The live status reports `renderSync.status` as `updated`, `failed`, or `not_configured`.
+
 The panel also includes **Reset session**, **Copy ID**, and **Download TXT** controls. The session ID is optional when using the unified service, because the bot starts directly from the credentials created by the panel. Keep the ID private if you export it for another host.
 
 For Render restarts, copy the final session ID into the optional secret `SESSION_ID` environment variable. Render's free filesystem is not permanent; keeping this secret lets the unified service restore the bot automatically after a new instance starts. If it is not set, pair again from the panel after an instance replacement.

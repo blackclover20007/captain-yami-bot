@@ -21,6 +21,10 @@ services:
         value: ./auth_info
       - key: SESSION_ID
         sync: false
+      - key: RENDER_API_KEY
+        sync: false
+      - key: RENDER_SERVICE_ID
+        sync: false
       - key: OWNER_JID
         sync: false
       - key: SUDO_JIDS

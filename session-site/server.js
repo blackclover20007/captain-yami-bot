@@ -18,6 +18,8 @@ const port = Number(process.env.PORT || 10000);
 const siteKey = process.env.PAIRING_SITE_KEY || '';
 const siteVersion = 'Ultra 1000';
 const startedAt = new Date().toISOString();
+const renderApiKey = process.env.RENDER_API_KEY || '';
+const renderServiceId = process.env.RENDER_SERVICE_ID || '';
 const logger = P({ level: process.env.LOG_LEVEL || 'info' });
 
 let pairing = { status: 'idle', mode: '', code: '', qr: '', phone: '', sessionId: '', delivery: '', message: 'The gate is dormant. Choose a pairing method.' };
@@ -26,6 +28,7 @@ let botChild = null;
 let lastPairAt = 0;
 let botStatus = 'waiting_for_session';
 let saveCredsPromise = Promise.resolve();
+let renderSync = { configured: Boolean(renderApiKey && renderServiceId), status: 'idle', updatedAt: '' };
 
 function json(res, status, body) {
   res.writeHead(status, { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' });
@@ -35,6 +38,34 @@ function json(res, status, body) {
 function cleanPhone(input) { return String(input || '').replace(/\D/g, ''); }
 function keyIsValid(key) { return !siteKey || key === siteKey; }
 function requestedKey(req, input = {}) { return req.headers['x-site-key'] || input.siteKey || ''; }
+
+async function syncSessionToRender(sessionId) {
+  if (!renderApiKey || !renderServiceId) {
+    renderSync = { ...renderSync, status: 'not_configured', updatedAt: new Date().toISOString() };
+    return false;
+  }
+  renderSync = { ...renderSync, status: 'updating', updatedAt: new Date().toISOString() };
+  try {
+    const response = await fetch(`https://api.render.com/v1/services/${encodeURIComponent(renderServiceId)}/env-vars/SESSION_ID`, {
+      method: 'PUT',
+      headers: {
+        accept: 'application/json',
+        'content-type': 'application/json',
+        authorization: `Bearer ${renderApiKey}`
+      },
+      body: JSON.stringify({ value: sessionId }),
+      signal: AbortSignal.timeout(15000)
+    });
+    if (!response.ok) throw new Error(`Render API HTTP ${response.status}`);
+    renderSync = { ...renderSync, status: 'updated', updatedAt: new Date().toISOString() };
+    logger.info('Render SESSION_ID updated automatically after pairing');
+    return true;
+  } catch (error) {
+    renderSync = { ...renderSync, status: 'failed', updatedAt: new Date().toISOString() };
+    logger.error({ error: error.message }, 'Could not update Render SESSION_ID automatically');
+    return false;
+  }
+}
 
 async function registered() {
   try {
@@ -107,11 +138,12 @@ async function startBotIfReady(ownerJid = '') {
 async function finishPairing(sock, phone) {
   await waitForCredentials();
   const sessionId = await collectSessionId();
-  pairing = { ...pairing, status: 'complete', sessionId, qr: '', delivery: 'web', message: 'Session linked. The bot is awakening from the Devil Gate…' };
+  const renderUpdated = await syncSessionToRender(sessionId);
+  pairing = { ...pairing, status: 'complete', sessionId, qr: '', delivery: renderUpdated ? 'render' : 'web', message: renderUpdated ? 'Session linked and saved to Render automatically. The bot is awakening from the Devil Gate…' : 'Session linked. The bot is awakening from the Devil Gate…' };
   activeSocket = null;
   await sock.end?.(undefined);
   await startBotIfReady(phone ? `${phone}@s.whatsapp.net` : '');
-  pairing = { ...pairing, delivery: 'web', message: 'WhatsApp linked. Captain Yami Bot is starting now. Copy the session only if you also want a second deployment.' };
+  pairing = { ...pairing, delivery: renderUpdated ? 'render' : 'web', message: renderUpdated ? 'WhatsApp linked. Render SESSION_ID updated automatically and Captain Yami Bot is starting now.' : 'WhatsApp linked. Captain Yami Bot is starting now. Configure Render sync to avoid manual session setup after a restart.' };
 }
 
 function attachPairingSocket(sock, mode, phone, saveCreds) {
@@ -200,7 +232,7 @@ const server = http.createServer(async (req, res) => {
     const liveBotStatus = await currentBotStatus();
     if (req.method === 'GET' && req.url === '/health') return json(res, 200, { ok: true, service: 'captain-yami-unified', version: siteVersion, startedAt, botStatus: liveBotStatus, pairing: pairing.status });
     if (req.method === 'GET' && req.url === '/ready') return json(res, liveBotStatus === 'connected' ? 200 : 200, { ok: liveBotStatus === 'connected', botStatus: liveBotStatus, pairing: pairing.status });
-    if (req.method === 'GET' && req.url === '/status') return json(res, 200, { service: 'captain-yami-unified', version: siteVersion, startedAt, uptimeSeconds: Math.floor((Date.now() - Date.parse(startedAt)) / 1000), botStatus: liveBotStatus, pairing: { ...pairing, sessionId: pairing.status === 'complete' ? pairing.sessionId : '' } });
+    if (req.method === 'GET' && req.url === '/status') return json(res, 200, { service: 'captain-yami-unified', version: siteVersion, startedAt, uptimeSeconds: Math.floor((Date.now() - Date.parse(startedAt)) / 1000), botStatus: liveBotStatus, renderSync: { configured: renderSync.configured, status: renderSync.status, updatedAt: renderSync.updatedAt }, pairing: { ...pairing, sessionId: pairing.status === 'complete' ? pairing.sessionId : '' } });
     if (req.method === 'GET' && req.url === '/manus-routes.json') return json(res, 200, { routes: [{ path: '/', title: 'Captain Yami Session Gate' }] });
 
     if (req.method === 'GET' && req.url === '/api/status') {
