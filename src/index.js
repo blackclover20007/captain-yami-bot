@@ -193,7 +193,7 @@ async function startBot() {
     if (type !== 'notify') return;
 
     for (const message of messages) {
-      if (!message.message || message.key.fromMe) continue;
+      if (!message.message) continue;
 
       const jid = message.key.remoteJid;
       if (!jid || jid === 'status@broadcast') continue;
@@ -201,6 +201,12 @@ async function startBot() {
       const text = getMessageText(message);
       const selectedId = getSelectedMenuId(message);
       const incomingText = text || selectedId;
+      const ownNumber = sock.user?.id?.split('@')[0]?.split(':')[0];
+      const chatNumber = jid.split('@')[0].split(':')[0];
+      const isSelfChat = Boolean(ownNumber && chatNumber && ownNumber === chatNumber);
+      // Baileys marks messages sent from the same phone as fromMe. Permit
+      // explicit commands in self-chat, but ignore ordinary outgoing text.
+      if (message.key.fromMe && (!isSelfChat || !incomingText?.startsWith(config.prefix))) continue;
       const senderJid = jid.endsWith('@g.us') ? message.key.participant : jid;
 
       ownerController.recordMessage(incomingText);
